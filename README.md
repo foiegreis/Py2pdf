@@ -11,7 +11,7 @@ It also allows you to specify:
 - the file tile
 - the header presence / absence
 
-![gui interface](http://url/to/img.png)
+![gui interface](https://github.com/foiegreis/Py2pdf/tree/main/img/gui.png)
 
 Please refer to https://linux.die.net/man/1/enscript for the complete list of esnscript arguments
 
