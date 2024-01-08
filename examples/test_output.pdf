@@ -1,0 +1,778 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 577 806
+%%Title:  test_input.py
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Mon Jan  8 17:21:05 2024
+%%Orientation: Landscape
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 8 8 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [595 842] 
+  >> setpagedevice
+} if
+/d_page_w 770 def
+/d_page_h 559 def
+/d_header_x 0 def
+/d_header_y 559 def
+/d_header_w 770 def
+/d_header_h 0 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 770 def
+/d_footer_h 0 def
+/d_output_w 770 def
+/d_output_h 559 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+90 rotate
+36 -577 translate
+/pagenum 1 def
+/fname (test_input.py) def
+/fdir (.) def
+/ftail (test_input.py) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+/Courier-Bold 8 8 SUF
+5 548 M
+(import) s
+/F-gs-font 8 8 SF
+33.8 548 M
+( subprocess) s
+/Courier-Bold 8 8 SUF
+5 539 M
+(import) s
+/F-gs-font 8 8 SF
+33.8 539 M
+( os) s
+/Courier-Bold 8 8 SUF
+5 512 M
+(def) s
+/F-gs-font 8 8 SF
+19.4 512 M
+( ) s
+/Courier-Bold 8 8 SUF
+24.2 512 M
+(generate_pdf) s
+/F-gs-font 8 8 SF
+81.8 512 M
+(\(path, py_file, pdf_file, settings\):) s
+5 494 M
+(    input_file = os.path.join\(path, py_file\)) s
+5 485 M
+(    output_file = os.path.join\(path, pdf_file\)) s
+5 467 M
+(    font = settings[) s
+/Courier-Bold 8 8 SUF
+101 467 M
+('font') s
+/F-gs-font 8 8 SF
+129.8 467 M
+(]) s
+5 458 M
+(    font_size = settings[) s
+/Courier-Bold 8 8 SUF
+125 458 M
+('font-size') s
+/F-gs-font 8 8 SF
+177.8 458 M
+(]) s
+5 449 M
+(    orientation = settings[) s
+/Courier-Bold 8 8 SUF
+134.6 449 M
+('orientation') s
+/F-gs-font 8 8 SF
+197 449 M
+(]) s
+5 440 M
+(    color = settings[) s
+/Courier-Bold 8 8 SUF
+105.8 440 M
+('color') s
+/F-gs-font 8 8 SF
+139.4 440 M
+(]) s
+5 422 M
+(    ) s
+/Courier-Oblique 8 8 SUF
+24.2 422 M
+(# Create PostScript file using enscript) s
+/F-gs-font 8 8 SF
+5 413 M
+(    enscript_command = [) s
+5 404 M
+(        ) s
+/Courier-Bold 8 8 SUF
+43.4 404 M
+('enscript') s
+/F-gs-font 8 8 SF
+91.4 404 M
+(,) s
+5 395 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 395 M
+('--output={output_file}') s
+/F-gs-font 8 8 SF
+163.4 395 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+177.8 395 M
+(# Output file path) s
+/F-gs-font 8 8 SF
+5 386 M
+(        ) s
+/Courier-Bold 8 8 SUF
+43.4 386 M
+('--highlight=python') s
+/F-gs-font 8 8 SF
+139.4 386 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+153.8 386 M
+(# Specify Python syntax highlighting) s
+/F-gs-font 8 8 SF
+5 377 M
+(        ) s
+/Courier-Bold 8 8 SUF
+43.4 377 M
+('--no-header') s
+/F-gs-font 8 8 SF
+105.8 377 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+120.2 377 M
+(# No header option) s
+/F-gs-font 8 8 SF
+5 368 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 368 M
+('-t {py_file}') s
+/F-gs-font 8 8 SF
+115.4 368 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+129.8 368 M
+(# Sets title as the file name) s
+/F-gs-font 8 8 SF
+5 359 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 359 M
+('-f{font}{font_size}') s
+/F-gs-font 8 8 SF
+149 359 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+163.4 359 M
+(# Font name and size) s
+/F-gs-font 8 8 SF
+5 350 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 350 M
+('--{orientation}') s
+/F-gs-font 8 8 SF
+129.8 350 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+144.2 350 M
+(# Orientation) s
+/F-gs-font 8 8 SF
+5 341 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 341 M
+('--color={color}') s
+/F-gs-font 8 8 SF
+129.8 341 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+144.2 341 M
+(# Color coded, bool) s
+/F-gs-font 8 8 SF
+5 332 M
+(        input_file  ) s
+/Courier-Oblique 8 8 SUF
+101 332 M
+(# Input file path) s
+/F-gs-font 8 8 SF
+5 323 M
+(    ]) s
+5 314 M
+(    postscript_content = subprocess.check_output\(enscript_command, universal_newlines=True\)) s
+5 296 M
+(    ) s
+/Courier-Oblique 8 8 SUF
+24.2 296 M
+(# Convert PostScript to PDF using ps2pdf) s
+/F-gs-font 8 8 SF
+5 287 M
+(    ps2pdf_command = [) s
+5 278 M
+(        ) s
+/Courier-Bold 8 8 SUF
+43.4 278 M
+('ps2pdf') s
+/F-gs-font 8 8 SF
+81.8 278 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+96.2 278 M
+(# Should be available if you have a TeX distribution installed) s
+/F-gs-font 8 8 SF
+5 269 M
+(        ) s
+/Courier-Bold 8 8 SUF
+43.4 269 M
+('-') s
+/F-gs-font 8 8 SF
+57.8 269 M
+( ) s
+/Courier-Bold 8 8 SUF
+62.6 269 M
+(if) s
+/F-gs-font 8 8 SF
+72.2 269 M
+( orientation.lower\(\) == ) s
+/Courier-Bold 8 8 SUF
+187.4 269 M
+('portrait') s
+/F-gs-font 8 8 SF
+235.4 269 M
+( ) s
+/Courier-Bold 8 8 SUF
+240.2 269 M
+(else) s
+/F-gs-font 8 8 SF
+259.4 269 M
+( ) s
+/Courier-Bold 8 8 SUF
+264.2 269 M
+('-c') s
+/F-gs-font 8 8 SF
+283.4 269 M
+(,) s
+5 260 M
+(        f) s
+/Courier-Bold 8 8 SUF
+48.2 260 M
+('-o={output_file}') s
+/F-gs-font 8 8 SF
+5 251 M
+(    ]) s
+5 242 M
+(    subprocess.run\(ps2pdf_command, input=postscript_content, universal_newlines=True\)) s
+/Courier-Bold 8 8 SUF
+5 215 M
+(if) s
+/F-gs-font 8 8 SF
+14.6 215 M
+( __name__ == ) s
+/Courier-Bold 8 8 SUF
+77 215 M
+('__main__') s
+/F-gs-font 8 8 SF
+125 215 M
+(:) s
+5 206 M
+(    path_to_py = ) s
+/Courier-Bold 8 8 SUF
+86.6 206 M
+('') s
+/F-gs-font 8 8 SF
+5 188 M
+(    py_name = ) s
+/Courier-Bold 8 8 SUF
+72.2 188 M
+('fast_slam1.py') s
+/F-gs-font 8 8 SF
+5 179 M
+(    pdf_name = ) s
+/Courier-Bold 8 8 SUF
+77 179 M
+('out.pdf') s
+/F-gs-font 8 8 SF
+5 161 M
+(    ) s
+/Courier-Oblique 8 8 SUF
+24.2 161 M
+(# Set here your desired pdf output structure) s
+/F-gs-font 8 8 SF
+5 152 M
+(    settings = {) s
+/Courier-Bold 8 8 SUF
+81.8 152 M
+('font') s
+/F-gs-font 8 8 SF
+110.6 152 M
+(: ) s
+/Courier-Bold 8 8 SUF
+120.2 152 M
+('Courier') s
+/F-gs-font 8 8 SF
+163.4 152 M
+(,) s
+5 143 M
+(                ) s
+/Courier-Bold 8 8 SUF
+81.8 143 M
+('font-size') s
+/F-gs-font 8 8 SF
+134.6 143 M
+(: ) s
+/Courier-Bold 8 8 SUF
+144.2 143 M
+('8') s
+/F-gs-font 8 8 SF
+158.6 143 M
+(,) s
+5 134 M
+(                ) s
+/Courier-Bold 8 8 SUF
+81.8 134 M
+('orientation') s
+/F-gs-font 8 8 SF
+144.2 134 M
+(: ) s
+/Courier-Bold 8 8 SUF
+153.8 134 M
+('landscape') s
+/F-gs-font 8 8 SF
+206.6 134 M
+(,  ) s
+/Courier-Oblique 8 8 SUF
+221 134 M
+(# portrait) s
+/F-gs-font 8 8 SF
+5 125 M
+(                ) s
+/Courier-Bold 8 8 SUF
+81.8 125 M
+('color') s
+/F-gs-font 8 8 SF
+115.4 125 M
+(: ) s
+/Courier-Bold 8 8 SUF
+125 125 M
+('false') s
+/F-gs-font 8 8 SF
+158.6 125 M
+(  ) s
+/Courier-Oblique 8 8 SUF
+168.2 125 M
+(# true) s
+/F-gs-font 8 8 SF
+5 116 M
+(                }) s
+5 98 M
+(    generate_pdf\(path_to_py, py_name, pdf_name, settings\)) s
+_R
+S
+%%Trailer
+%%Pages: 1
+%%DocumentNeededResources: font Courier-Oblique Courier-Bold Courier 
+%%EOF
