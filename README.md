@@ -29,7 +29,7 @@ pip3 install customtkinter
 ```
 
 ## Usage
-git clone (https://github.com/foiegreis/Py2pdf.git)
+git clone https://github.com/foiegreis/Py2pdf.git
 
 cd Py2pdf
 
