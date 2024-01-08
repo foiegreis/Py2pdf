@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
 %%BoundingBox: 18 36 577 806
-%%Title:  test_input.py
+%%Title:  /home/foiegreis/Documents/GitHub/Py2pdf/examples/test_input.py
 %%Creator: GNU Enscript 1.6.5.90
-%%CreationDate: Mon Jan  8 17:48:00 2024
+%%CreationDate: Mon Jan  8 18:41:58 2024
 %%Orientation: Landscape
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -428,8 +428,8 @@ _S
 90 rotate
 36 -577 translate
 /pagenum 1 def
-/fname (examples/test_input.py) def
-/fdir (examples) def
+/fname (/home/foiegreis/Documents/GitHub/Py2pdf/examples/test_input.py) def
+/fdir (/home/foiegreis/Documents/GitHub/Py2pdf/examples) def
 /ftail (test_input.py) def
 /user_header_p false def
 /user_footer_p false def
