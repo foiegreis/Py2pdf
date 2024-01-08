@@ -44,7 +44,7 @@ def generate_pdf(path, py_file, pdf_file, settings):
 
 
 if __name__ == '__main__':
-    path_to_py = ''  # Path to folder
+    path_to_py = 'examples'  # Path to folder
     py_name = 'test_input.py'  # Input file name
     pdf_name = 'test_output.pdf'  # Output file name
 
