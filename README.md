@@ -32,26 +32,12 @@ pip3 install customtkinter
 ```
 
 ## Usage
-git clone https://github.com/your-username/your-repo.git
+git clone (https://github.com/foiegreis/Py2pdf.git)
 
-cd your-repo
+cd Py2pdf
 
 ## Run
 
-Modify the desired settings from line 47
-
-```bash
-path_to_py = ''  # Path to folder
-py_name = 'test_input.py'  # Input file name
-pdf_name = 'test_output.pdf'  # Output file name
-
-# Set here your desired pdf output structure
-settings = {'font': 'Courier',
-            'font-size': '8',
-            'orientation': 'landscape',  # portrait
-            'color': 'false'  # true
-            }
-```
 ```bash
 python3 py2pdf.py
 ```
