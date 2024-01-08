@@ -5,12 +5,10 @@ This Python script converts Python code (.py files) to PDF files with syntax hig
 ![gui interface](img/gui.png)
 
 
-It also allows you to specify:
+The pdf options you can specify are:
 - the page orientation (portrait or landscape)
 - the font name and size
 - the code color palette:  b/w or color
-- the file tile
-- the header presence / absence
 
 Please refer to https://linux.die.net/man/1/enscript for the complete list of esnscript arguments
 
