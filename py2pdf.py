@@ -27,37 +27,7 @@ class App:
                                              font=("Roboto",20))
         label_title.grid(column=1, row=0, pady=5, padx=5, sticky='e')
 
-    def file_uploader(self, row, text, command):
-        """File uploader"""
-        label = customtkinter.CTkLabel(master=self.frame, text=f"File {text}: ", font=("Roboto", 13))
-        label.grid(column=0, row=row, pady=2, padx=10, sticky='w')
-        label_entry = customtkinter.CTkLabel(master=self.frame, text="File", font=("Roboto", 13),
-                                             bg_color='white', fg_color='white',
-                                             corner_radius=50, width=200,
-                                             height=20)
-        label_entry.grid(column=1, row=row, pady=2, padx=2)
-        button = customtkinter.CTkButton(master=self.frame, text="Select", command=command)
-        button.grid(column=2, row=row, pady=2, padx=2)
-
-class py2pdfGUI(App):
-    def __init__(self):
-        super().__init__()
-        # Ade utils
-        self.path = ''
-        self.py_file = ''
-        self.pdf_file = ''
-
-        self.font_size_list = ['6', '7', '8', '9', '10', '11', '12', '13', '14']
-        self.font_list = ['Courier', 'Times-Roman', 'Arial']
-        self.font = customtkinter.StringVar()
-        self.font_size = customtkinter.StringVar()
-        self.orientation = customtkinter.StringVar()
-        self.colormap = customtkinter.StringVar()
-
-        self.build_gui()
-        self.root.mainloop()
-
-    def upload_file(self):
+    def upload_callback(self):
         """Upload file function"""
         # Open a file dialog for file selection
         file_path = filedialog.askopenfilename()
@@ -76,13 +46,17 @@ class py2pdfGUI(App):
                                        height=20)
         entry.grid(column=1, row=1, pady=2, padx=2)
 
-    def get_settings(self):
-        self.orientation = self.orientation.get()
-        self.colormap = self.colormap.get()
-        if self.colormap == 'false':
-            self.colormap = '='+self.colormap
-        self.font = self.font.get()
-        self.font_size = self.font_size.get()
+    def file_uploader(self, row, text, command):
+        """File uploader"""
+        label = customtkinter.CTkLabel(master=self.frame, text=f"File {text}: ", font=("Roboto", 13))
+        label.grid(column=0, row=row, pady=2, padx=10, sticky='w')
+        label_entry = customtkinter.CTkLabel(master=self.frame, text="File", font=("Roboto", 13),
+                                             bg_color='white', fg_color='white',
+                                             corner_radius=50, width=200,
+                                             height=20)
+        label_entry.grid(column=1, row=row, pady=2, padx=2)
+        button = customtkinter.CTkButton(master=self.frame, text="Select", command=command)
+        button.grid(column=2, row=row, pady=2, padx=2)
 
     def radio_option(self, label_text, text_1, opt_1, text_2, opt_2, var, row):
         label = customtkinter.CTkLabel(master=self.frame, text=label_text+': ', font=("Roboto", 13))
@@ -106,9 +80,36 @@ class py2pdfGUI(App):
         label.grid(column=0, row=row, pady=10, padx=10, sticky='w')
         combobox.grid(column=1, row=row, pady=10, padx=10, sticky='w')
 
+
+class py2pdfGUI(App):
+    def __init__(self):
+        super().__init__()
+        # Ade utils
+        self.path = ''
+        self.py_file = ''
+        self.pdf_file = ''
+
+        self.font_size_list = ['6', '7', '8', '9', '10', '11', '12', '13', '14']
+        self.font_list = ['Courier', 'Times-Roman', 'Arial']
+        self.font = customtkinter.StringVar()
+        self.font_size = customtkinter.StringVar()
+        self.orientation = customtkinter.StringVar()
+        self.colormap = customtkinter.StringVar()
+
+        self.build_gui()
+        self.root.mainloop()
+
+    def get_settings(self):
+        self.orientation = self.orientation.get()
+        self.colormap = self.colormap.get()
+        if self.colormap == 'false':
+            self.colormap = '='+self.colormap
+        self.font = self.font.get()
+        self.font_size = self.font_size.get()
+
     def build_gui(self):
         """Build gui"""
-        self.file_uploader(1, "select .py file", self.upload_file)
+        self.file_uploader(1, "select .py file", self.upload_callback)
         self.radio_option('Orientation',
                           'portrait', 'portrait',
                           'landscape', 'landscape',
