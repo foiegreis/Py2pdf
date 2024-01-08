@@ -1,8 +1,9 @@
 # Py2Pdf: Python Code to PDF Converter 
 
-This Python script converts Python code (.py files) to PDF files with syntax highlighting using enscript and ps2pdf.
+This Python script converts Python code (.py files) to PDF files with syntax highlighting using enscript and ps2pdf. It displays an easy to use GUI implemented using customtkinter 
 
-It displays an easy to use GUI implemented using customtkinter 
+![gui interface](img/gui.png)
+
 
 It also allows you to specify:
 - the page orientation (portrait or landscape)
@@ -10,8 +11,6 @@ It also allows you to specify:
 - the code color palette:  b/w or color
 - the file tile
 - the header presence / absence
-
-![gui interface](img/gui.png)
 
 Please refer to https://linux.die.net/man/1/enscript for the complete list of esnscript arguments
 
